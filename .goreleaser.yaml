@@ -1,0 +1,21 @@
+project_name: starquery
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos: [linux]
+    goarch: [amd64]
+    main: ./cmd/starquery
+
+nfpms:
+  - id: deb
+    maintainer: kyle@coder.com
+    package_name: starquery
+    formats: [deb]
+    contents:
+      - src: starquery.service
+        dst: /usr/lib/systemd/system/starquery.service

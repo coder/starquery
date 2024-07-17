@@ -1,0 +1,12 @@
+[Unit]
+Description=starquery 
+After=network.target
+
+[Service]
+User=root
+ExecStart=/usr/bin/starquery
+Restart=on-failure
+EnvironmentFile=/run/starquery/environ
+
+[Install]
+WantedBy=multi-user.target
