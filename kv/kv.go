@@ -36,7 +36,13 @@ func (r *redis) Get(ctx context.Context, key string) (string, error) {
 }
 
 func (r *redis) Delete(ctx context.Context, key string) error {
-	return r.Client.Command(ctx, "DEL", key).Ok()
+	// DEL returns the number of records deleted.
+	// We don't care if it exists or not for our impl.
+	_, err := r.Client.Command(ctx, "DEL", key).Int()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func NewMemory() Store {

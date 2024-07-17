@@ -154,7 +154,6 @@ func (a *API) handleWebhook(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "unsupported action", http.StatusBadRequest)
 		return
 	}
-
 	if err != nil {
 		a.logger.Error("failed to update stargazer data", "error", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
