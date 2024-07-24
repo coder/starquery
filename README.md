@@ -20,7 +20,11 @@ This service is used by [coder/coder](https://github.com/coder/coder) to prompt 
 
 ## Deployment
 
-starquery is deployed on a tiny VM in Google Cloud. It is exposed via a Cloudflare Tunnel and accessible at: `starquery.coder.com`.
+starquery is hosted at [starquery.coder.com](https://starquery.coder.com). Not all repositories are tracked by default (that'd be a lot to handle!). Feel free to repositories [here](https://github.com/coder/starquery/blob/main/cmd/starquery/main.go#L52).
+
+To run starquery, `GITHUB_TOKEN` and `REDIS_URL` are required. `WEBHOOK_SECRET` must be set if accepting Webhooks from GitHub's API.
+
+### Hosted
 
 The `./deploy.sh` script can be used to update the service (probably should be automated at some point).
 
@@ -34,10 +38,16 @@ GITHUB_TOKEN=
 WEBHOOK_SECRET=
 ```
 
-### Cloudflare Tunnel
-
-See [the config file](./cloudflared.yaml). `cloudflared` is ran in `screen -S cloudflared`:
+To set up the Cloudflare Tunnel, see [the config file](./cloudflared.yaml). `cloudflared` is ran in `screen -S cloudflared`:
 
 ```sh
 cloudflared tunnel run 7e5e3b0d-4eb3-4aff-9924-e5f6efebcc2d
 ```
+
+To set up a GitHub webhook:
+
+1. Head to the "New Webhook" page (e.g. https://github.com/coder/starquery/settings/hooks/new).
+2. Set the payload URL to `https://starquery.coder.com/webhook`.
+3. Click "Let me select individual events.", uncheck "Push", check "Stars".
+
+Delivery should succeed for the initial ping!
