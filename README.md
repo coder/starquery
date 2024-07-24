@@ -1,29 +1,43 @@
-# starquery
+<h1>
+    <img src="./icon.png" width="48px" style="margin-right: 12px;" align="center">
+    starquery
+</h1>
 
-An API that near-realtime tracks whether a user has starred a GitHub repository.
+[!["Join us on
+Discord"](https://badgen.net/discord/online-members/coder)](https://coder.com/chat?utm_source=github.com/coder/vscode-coder&utm_medium=github&utm_campaign=readme.md)
+
+Query in near-realtime if a user has starred a GitHub repository.
+
+```
+https://starquery.coder.com/coder/coder/user/kylecarbs
+```
+
+- Uses GitHub Webhooks for near-realtime accuracy.
+- Periodically refreshes all stargazers using GitHub's GraphQL API for accuracy.
+- Start tracking a repository by [adding it to the list](https://github.com/coder/starquery/blob/main/cmd/starquery/main.go#L52)!
+
+This service is used by [coder/coder](https://github.com/coder/coder) to prompt users to star the repository if they haven't already!
 
 ## Deployment
 
-The API is live at `starquery.coder.com`. A Cloudflare Tunnel is used for DDoS protection made with [this guide](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/create-local-tunnel/). The config is:
+starquery is deployed on a tiny VM in Google Cloud. It is exposed via a Cloudflare Tunnel and accessible at: `starquery.coder.com`.
 
-```yaml
-# Located in /home/kyle/.cloudflared/config.yml
-url: http://localhost:8080
-tunnel: 7e5e3b0d-4eb3-4aff-9924-e5f6efebcc2d
-credentials-file: /home/kyle/.cloudflared/7e5e3b0d-4eb3-4aff-9924-e5f6efebcc2d.json
-```
+The `./deploy.sh` script can be used to update the service (probably should be automated at some point).
 
-`cloudflared` is ran in `screen -S cloudflared`:
-
-```
-cloudflared tunnel run 7e5e3b0d-4eb3-4aff-9924-e5f6efebcc2d
-```
-
-`/run/starquery/environ` must have `WEBHOOK_SECRET`, but here's a template:
+`/run/starquery/environ` must exist. Here is a template:
 
 ```env
 REDIS_URL=127.0.0.1:6379
 BIND_ADDRESS=127.0.0.1:8080
 # use cdrci account
 GITHUB_TOKEN=
+WEBHOOK_SECRET=
+```
+
+### Cloudflare Tunnel
+
+See [the config file](./cloudflared.yaml). `cloudflared` is ran in `screen -S cloudflared`:
+
+```sh
+cloudflared tunnel run 7e5e3b0d-4eb3-4aff-9924-e5f6efebcc2d
 ```
