@@ -62,8 +62,7 @@ func New(ctx context.Context, opts Options) *API {
 	}
 
 	api.mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusTemporaryRedirect)
-		w.Header().Set("Location", "https://github.com/coder/starquery")
+		http.Redirect(w, r, "https://github.com/coder/starquery", http.StatusTemporaryRedirect)
 	})
 	api.mux.HandleFunc("GET /{org}/{repo}/user/{username}", api.handleStarredByUser)
 	api.mux.HandleFunc("POST /webhook", api.handleWebhook)
